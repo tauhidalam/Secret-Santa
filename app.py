@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import random
 import string
 import os
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -229,5 +230,5 @@ def reset_matching():
 
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    serve(app, host='0.0.0.0', port=5000)

@@ -3,13 +3,52 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-    <h1>Login</h1>
+    <div class="container">
+        <h1 class="text-center">Login</h1>
 
-    <form method="POST">
-        <label for="unique_code">Enter Your 6-Digit Code:</label>
-        <input type="text" id="unique_code" name="unique_code" required><br><br>
+        <!-- Login form -->
+        <form method="POST">
+            <div class="form-group">
+                <label for="unique_code">Enter Your 6-Digit Code:</label>
+                <input type="text" id="unique_code" name="unique_code" class="form-control" required>
+            </div>
 
-        <button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> Login</button>
-    </form>
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+        
+        <!-- Invalid login popup modal -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="modal fade" id="loginErrorModal" tabindex="-1" role="dialog" aria-labelledby="loginErrorModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="loginErrorModalLabel">Login Failed</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {% for message in messages %}
+                                    <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automatically trigger the modal -->
+                <script>
+                    $(document).ready(function(){
+                        $('#loginErrorModal').modal('show');
+                    });
+                </script>
+            {% endif %}
+        {% endwith %}
+    </div>
 {% endblock %}
-s
