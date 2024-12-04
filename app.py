@@ -39,9 +39,20 @@ def generate_unique_code(name):
     return f"{initials}{random_digits}"
 
 # Routes
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('login.html')  # This will prompt the user to enter their code
+    if request.method == 'POST':
+        unique_code = request.form.get('unique_code')
+        user = User.query.filter_by(unique_code=unique_code).first()
+        if user:
+            session['user_id'] = user.id  # Store user in session
+            if user.is_admin:
+                return redirect(url_for('admin'))  # Redirect to admin page if user is admin
+            else:
+                return redirect(url_for('wishlist'))  # Redirect to wishlist page if user is not admin
+        flash('Invalid code, please try again.')  # Flash error if code is incorrect
+    return render_template('login.html')  # Render the login page to enter the 6-digit code
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
