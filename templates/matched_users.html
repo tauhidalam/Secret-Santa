@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Matched Users - Secret Santa{% endblock %}
+
+{% block header %}
+    <h1>Matched Users</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h3>Matched Users</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Giver</th>
+                    <th>Receiver</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for giver, receiver in matched_pairs %}
+                    <tr>
+                        <td>{{ giver.name }}</td>
+                        <td>{{ receiver.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

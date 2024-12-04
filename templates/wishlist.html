@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Wishlist - Secret Santa{% endblock %}
+
+{% block header %}
+    <h1>{{ user.name }}'s Wishlist</h1>
+{% endblock %}
+
+{% block content %}
+    {% if matched_user %}
+        <h3>Wishlist for {{ matched_user.name }}</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Product URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in wishlist %}
+                <tr>
+                    <td><strong>{{ item.wishlist_name }}</strong></td>
+                    <td>
+                        {% if item.product_url %}
+                            <a href="{{ item.product_url }}" target="_blank">Click here for product</a>
+                        {% else %}
+                            No URL provided
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="form-container">
+            <h3>Add a New Wishlist Item</h3>
+            <form method="POST">
+                <label for="wishlist_name">Wishlist Item Name:</label>
+                <input type="text" id="wishlist_name" name="wishlist_name" required><br>
+
+                <label for="product_url">Product URL (Optional):</label>
+                <input type="url" id="product_url" name="product_url"><br>
+
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Wishlist Item</button>
+            </form>
+        </div>
+
+        <div class="wishlist-items">
+            <h3>{{ user.name }}'s Wishlist</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Item Name</th>
+                        <th scope="col">Product URL</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in wishlist %}
+                    <tr>
+                        <td><strong>{{ item.wishlist_name }}</strong></td>
+                        <td>
+                            {% if item.product_url %}
+                                <a href="{{ item.product_url }}" target="_blank">Click here for product</a>
+                            {% else %}
+                                No URL provided
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="{{ url_for('delete_wishlist_item', item_id=item.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-delete"><i class="fas fa-trash-alt"></i> Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

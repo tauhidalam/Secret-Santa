@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block header %}
+    <h1>Admin Dashboard</h1>
+{% endblock %}
+
+{% block content %}
+    <h3>Add New User</h3>
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add User</button>
+    </form>
+
+    <h3>Users List</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Unique Code</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.unique_code }}</td>
+                <td>
+                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Matched Users</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Giver</th>
+                <th scope="col">Receiver</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for giver_name, receiver_name in matched_users_info %}
+                <tr>
+                    <td>{{ giver_name }}</td>
+                    <td>{{ receiver_name }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Button to trigger the modal for matching -->
+    <button class="btn btn-success" data-toggle="modal" data-target="#matchModal">Match Users</button>
+
+    <!-- Modal for confirmation of matching -->
+    <div class="modal fade" id="matchModal" tabindex="-1" role="dialog" aria-labelledby="matchModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="matchModalLabel">Confirm Match</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to match the users? Once matched, users will not be able to edit their wishlists.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form method="POST" action="{{ url_for('match') }}">
+                        <button type="submit" class="btn btn-primary">Yes, Match Users</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button to trigger the modal for resetting the match -->
+<button class="btn btn-warning" data-toggle="modal" data-target="#resetMatchModal">Reset Matching</button>
+
+<!-- Modal for confirmation of resetting match -->
+<div class="modal fade" id="resetMatchModal" tabindex="-1" role="dialog" aria-labelledby="resetMatchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetMatchModalLabel">Confirm Reset</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reset the matches? This will allow users to edit their wishlists again.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('reset_matching') }}">
+                    <button type="submit" class="btn btn-primary">Yes, Reset Matches</button>
+                </form>
+        
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
