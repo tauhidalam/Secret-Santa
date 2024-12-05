@@ -61,8 +61,8 @@ def admin():
 
     user = User.query.get(session['user_id'])
     if not user.is_admin:
-        return redirect(url_for('wishlist'))  # Non-admin users are redirected to wishlist page
-    
+        return redirect(url_for('wishlist'))  # Non-admin users are redirected to the wishlist page
+
     if request.method == 'POST':
         name = request.form.get('name')
         unique_code = generate_unique_code(name)
@@ -71,13 +71,23 @@ def admin():
         db.session.commit()
         flash(f'User {name} added with code: {unique_code}')
         return redirect(url_for('admin'))  # Stay on the admin page after registration
-    
-    # Fetch all users (including admin)
-    users = User.query.all()
+
+    # Fetch all users (excluding admins)
+    users = (
+        db.session.query(User, db.func.count(Wishlist.id).label('wishlist_count'))
+        .outerjoin(Wishlist, User.id == Wishlist.user_id)
+        .filter(User.is_admin == False)  # Exclude admin users
+        .group_by(User.id)  # Group by user to count their wishlists
+        .all()
+    )
 
     # Fetch all matches and join the Match model with User to get giver and receiver
-    # Exclude admin from matches
-    matched_users = db.session.query(Match, User).join(User, Match.giver_id == User.id).filter(User.is_admin == False).all()
+    matched_users = (
+        db.session.query(Match, User)
+        .join(User, Match.giver_id == User.id)
+        .filter(User.is_admin == False)  # Exclude admin users from the matches list
+        .all()
+    )
 
     # Prepare the data for matched users, adding the receiver information
     matched_users_info = []
@@ -85,7 +95,10 @@ def admin():
         receiver = User.query.get(match.receiver_id)  # Get receiver based on receiver_id
         matched_users_info.append((giver.name, receiver.name))
 
-    return render_template('admin.html', users=users, matched_users_info=matched_users_info)
+    total_users = len(users)
+
+    return render_template('admin.html', users=users, matched_users_info=matched_users_info,total_users=total_users)
+
 
 
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
